@@ -7,11 +7,11 @@ import pandas as pd
 
 try:
     s3_client = boto3.client('s3'
-                             , aws_access_key_id=""
-                             , aws_secret_access_key="")
+                             , aws_access_key_id="aws_access_key_id"
+                             , aws_secret_access_key="aws_secret_access_key")
     emr_client = boto3.client('emr'
-                              , aws_access_key_id=""
-                              , aws_secret_access_key="")
+                              , aws_access_key_id="aws_access_key_id"
+                              , aws_secret_access_key="aws_secret_access_key")
 
     page_iterator = emr_client.get_paginator('list_clusters').paginate()
     clusters = list()
@@ -29,12 +29,12 @@ try:
         s3 = boto3.client('s3')
         log_dict = {}
         print(cluster)
-        steps = s3_client.list_objects_v2(Bucket="", Prefix="logs/"+cluster+"/steps/")
+        steps = s3_client.list_objects_v2(Bucket="Bucket", Prefix="logs/"+cluster+"/steps/")
         if "Contents" in steps.keys():
             for step in steps['Contents']:
                 # if "stderr" in obj['Key'] and "s-XXXXXXXXXXXXX" in obj['Key']:
                 if "stderr" in step['Key']:
-                    response = s3_client.get_object(Bucket="", Key=step['Key'])
+                    response = s3_client.get_object(Bucket="Bucket", Key=step['Key'])
                     content = response['Body'].read()
                     with gzip.GzipFile(fileobj=io.BytesIO(content), mode='rb') as fh:
                         content = fh.read().decode("utf-8")
